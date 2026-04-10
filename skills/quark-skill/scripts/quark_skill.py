@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 SKILL_DIR = Path(__file__).resolve().parents[1]
-REPO_ROOT = SKILL_DIR.parent
+REPO_ROOT = SKILL_DIR.parents[1]
 CONFIG_DIR = REPO_ROOT / "config"
 COOKIES_FILE = CONFIG_DIR / "cookies.txt"
 TARGET_FILE = CONFIG_DIR / "config.json"

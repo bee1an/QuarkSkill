@@ -5,7 +5,7 @@ Run commands through the skill entrypoint.
 ## Install
 
 ```bash
-pip install -r ${SKILL_PATH}/../requirements.txt
+pip install -r ${SKILL_PATH}/../../requirements.txt
 python -m playwright install firefox
 ```
 
@@ -46,7 +46,7 @@ Success shape:
 python3 ${SKILL_PATH}/scripts/quark_skill.py login
 ```
 
-This opens Firefox, waits for the user to finish login, then stores cookies in `${SKILL_PATH}/../config/cookies.txt`.
+This opens Firefox, waits for the user to finish login, then stores cookies in `${SKILL_PATH}/../../config/cookies.txt`.
 
 ## Inspect Folders
 

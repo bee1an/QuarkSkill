@@ -1,6 +1,6 @@
 ---
-name: quarkpan-tool
-description: Use when the user wants to log into Quark cloud drive, inspect root folders, set a default save directory, or batch-save Quark share links with the forked QuarkPanTool workflow. Prefer the structured wrapper before falling back to the original interactive script.
+name: quark-skill
+description: Use when the user wants to log into Quark cloud drive, inspect root folders, set a default save directory, or batch-save Quark share links with the structured QuarkSkill workflow in this repository.
 ---
 
 # QuarkPanTool Skill
@@ -21,7 +21,7 @@ python3 ${SKILL_PATH}/scripts/quark_skill.py preflight
 
 Interpret the result before doing anything else:
 
-- If dependencies are missing, install them with `pip install -r ${SKILL_PATH}/../requirements.txt` and `python -m playwright install firefox`.
+- If dependencies are missing, install them with `pip install -r ${SKILL_PATH}/../../requirements.txt` and `python -m playwright install firefox`.
 - If `ready` is `false` because login is missing or expired, run the login command next.
 - If `ready` is `true`, continue with structured commands.
 

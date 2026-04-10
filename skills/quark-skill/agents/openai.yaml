@@ -1,0 +1,7 @@
+interface:
+  display_name: "QuarkSkill"
+  short_description: "Log into Quark and batch-save Quark cloud-drive shares"
+  default_prompt: "Use $quark-skill to check readiness, log into Quark, pick a save folder, and batch-save Quark share links."
+
+policy:
+  allow_implicit_invocation: true

@@ -5,13 +5,13 @@ QuarkSkill is a standalone repository for a Codex skill that works with Quark cl
 It provides:
 
 - a structured skill entrypoint for readiness checks, login, folder inspection, and batch save
-- a `skill/` directory that can be consumed as a Codex skill
+- a `skills/quark-skill/` directory that can be consumed as a Codex skill
 
 ## Repository Layout
 
 ```text
 .
-├── skill/                  # Codex skill metadata, docs, and structured wrapper
+├── skills/quark-skill/     # Codex skill metadata, docs, and structured wrapper
 ├── config/                 # Local runtime state created at use time
 ├── requirements.txt
 └── LICENSE
@@ -29,27 +29,27 @@ python -m playwright install firefox
 Run a preflight check:
 
 ```bash
-python3 skill/scripts/quark_skill.py preflight
+python3 skills/quark-skill/scripts/quark_skill.py preflight
 ```
 
 Log into Quark:
 
 ```bash
-python3 skill/scripts/quark_skill.py login
+python3 skills/quark-skill/scripts/quark_skill.py login
 ```
 
 Inspect folders and set a default target:
 
 ```bash
-python3 skill/scripts/quark_skill.py folders
-python3 skill/scripts/quark_skill.py set-target --folder-id YOUR_FOLDER_ID
+python3 skills/quark-skill/scripts/quark_skill.py folders
+python3 skills/quark-skill/scripts/quark_skill.py set-target --folder-id YOUR_FOLDER_ID
 ```
 
 Batch-save share links:
 
 ```bash
-python3 skill/scripts/quark_skill.py save "https://pan.quark.cn/s/..."
-python3 skill/scripts/quark_skill.py save --from-file url.txt
+python3 skills/quark-skill/scripts/quark_skill.py save "https://pan.quark.cn/s/..."
+python3 skills/quark-skill/scripts/quark_skill.py save --from-file url.txt
 ```
 
 ## Upstream Attribution
