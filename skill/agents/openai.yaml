@@ -1,0 +1,7 @@
+interface:
+  display_name: "QuarkPanTool"
+  short_description: "Batch-save Quark cloud-drive shares with a structured wrapper"
+  default_prompt: "Use $quarkpan-tool to check readiness, log into Quark, choose a save folder, and batch-save Quark share links."
+
+policy:
+  allow_implicit_invocation: true
