@@ -70,6 +70,13 @@ def find_missing_modules() -> list[str]:
             importlib.import_module(module_name)
         except Exception:
             missing.append(module_name)
+
+    proxy_env_names = ("ALL_PROXY", "HTTPS_PROXY", "HTTP_PROXY", "all_proxy", "https_proxy", "http_proxy")
+    if any(str(os.environ.get(name, "")).startswith("socks") for name in proxy_env_names):
+        try:
+            importlib.import_module("socksio")
+        except Exception:
+            missing.append("socksio")
     return missing
 
 
@@ -652,12 +659,12 @@ async def command_login(_: argparse.Namespace) -> int:
             INSTALL_HINT,
         )
 
-    from playwright.sync_api import sync_playwright
+    from playwright.async_api import async_playwright
 
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
 
-    with sync_playwright() as playwright:
-        context = playwright.firefox.launch_persistent_context(
+    async with async_playwright() as playwright:
+        context = await playwright.firefox.launch_persistent_context(
             str(REPO_ROOT / "web_browser_data"),
             headless=False,
             slow_mo=0,
@@ -665,12 +672,12 @@ async def command_login(_: argparse.Namespace) -> int:
             no_viewport=True,
         )
         try:
-            page = context.pages[0] if context.pages else context.new_page()
-            page.goto("https://pan.quark.cn/")
+            page = context.pages[0] if context.pages else await context.new_page()
+            await page.goto("https://pan.quark.cn/")
             input("在弹出的夸克网页登录成功后，回到终端按 Enter 继续...")
-            cookies = page.context.cookies()
+            cookies = await page.context.cookies()
         finally:
-            context.close()
+            await context.close()
 
     COOKIES_FILE.write_text(str(cookies), encoding="utf-8")
     cookie = cookie_string_from_file()
