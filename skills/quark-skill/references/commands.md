@@ -61,6 +61,13 @@ python3 ${SKILL_PATH}/scripts/quark_skill.py set-target --folder-id YOUR_FOLDER_
 python3 ${SKILL_PATH}/scripts/quark_skill.py set-target --root
 ```
 
+## Create Folder
+
+```bash
+python3 ${SKILL_PATH}/scripts/quark_skill.py create-dir "来自：分享"
+python3 ${SKILL_PATH}/scripts/quark_skill.py create-dir "子目录" --parent-id YOUR_FOLDER_ID
+```
+
 ## Batch Save
 
 ```bash
@@ -75,3 +82,32 @@ Per-link statuses are:
 - `saved`
 - `already_saved`
 - `failed`
+
+## Share
+
+```bash
+python3 ${SKILL_PATH}/scripts/quark_skill.py share QUARK_FOLDER_URL --traverse-depth 0
+python3 ${SKILL_PATH}/scripts/quark_skill.py share QUARK_FOLDER_URL --traverse-depth 1 --expire permanent
+python3 ${SKILL_PATH}/scripts/quark_skill.py share QUARK_FOLDER_URL --traverse-depth 2 --private --password 1234
+```
+
+Default output files:
+
+- `share/share_url.txt`
+- `share/retry.txt`
+- `share/share_error.txt`
+
+## Retry Share
+
+```bash
+python3 ${SKILL_PATH}/scripts/quark_skill.py retry-share
+python3 ${SKILL_PATH}/scripts/quark_skill.py retry-share --from-file share/retry.txt
+```
+
+## Download
+
+```bash
+python3 ${SKILL_PATH}/scripts/quark_skill.py download "https://pan.quark.cn/s/..."
+python3 ${SKILL_PATH}/scripts/quark_skill.py download --from-file url.txt
+python3 ${SKILL_PATH}/scripts/quark_skill.py download --from-file url.txt --output-dir downloads
+```

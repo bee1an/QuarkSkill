@@ -1,6 +1,6 @@
 ---
 name: quark-skill
-description: Use when the user wants to log into Quark cloud drive, inspect root folders, set a default save directory, or batch-save Quark share links with the structured QuarkSkill workflow in this repository.
+description: Use when the user wants to log into Quark cloud drive, inspect root folders, create folders, set a default save directory, batch-save Quark share links, generate Quark share links from folders, retry failed shares, or download files from their own Quark shares.
 ---
 
 # QuarkPanTool Skill
@@ -33,8 +33,12 @@ Prefer the wrapper script because it returns machine-readable JSON:
 - `python3 ${SKILL_PATH}/scripts/quark_skill.py folders`
 - `python3 ${SKILL_PATH}/scripts/quark_skill.py set-target --folder-id FOLDER_ID`
 - `python3 ${SKILL_PATH}/scripts/quark_skill.py set-target --root`
+- `python3 ${SKILL_PATH}/scripts/quark_skill.py create-dir "文件夹名"`
 - `python3 ${SKILL_PATH}/scripts/quark_skill.py save "https://pan.quark.cn/s/..."`
 - `python3 ${SKILL_PATH}/scripts/quark_skill.py save --from-file url.txt`
+- `python3 ${SKILL_PATH}/scripts/quark_skill.py share QUARK_FOLDER_URL --traverse-depth 0`
+- `python3 ${SKILL_PATH}/scripts/quark_skill.py retry-share`
+- `python3 ${SKILL_PATH}/scripts/quark_skill.py download "https://pan.quark.cn/s/..."`
 
 Read [references/commands.md](./references/commands.md) when you need concrete examples or output shapes.
 
@@ -65,3 +69,23 @@ The wrapper returns a per-link status summary:
 - `failed`
 
 If the user wants a one-off destination without changing the saved default, pass `--target-id`.
+
+## Share Workflow
+
+Use `share` to generate share links from your own Quark folder page URL or folder id.
+
+- `--traverse-depth 0` shares the folder itself
+- `--traverse-depth 1` shares each first-level child folder
+- `--traverse-depth 2` shares second-level child folders
+- `--private` makes the generated links password-protected
+- `retry-share` retries failed entries written by the last `share` run
+
+Generated URLs and retry state are written under the repository `share/` directory by default.
+
+## Download Workflow
+
+Use `download` for share links created from your own Quark drive files.
+
+- It writes files under the repository `downloads/` directory by default
+- It can take direct URLs or `--from-file`
+- It fails fast for third-party shares that are not owned by the logged-in account

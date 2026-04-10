@@ -160,8 +160,7 @@ cython_debug/
 #.idea/
 
 # QuarkSkill runtime state
-config/*
-!config/.gitkeep
+config/
 downloads/
 share/
 web_browser_data/

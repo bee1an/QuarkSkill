@@ -4,7 +4,7 @@ QuarkSkill is a standalone repository for a Codex skill that works with Quark cl
 
 It provides:
 
-- a structured skill entrypoint for readiness checks, login, folder inspection, and batch save
+- a structured skill entrypoint for readiness checks, login, folder inspection, folder creation, batch save, batch share, retry-share, and local download
 - a `skills/quark-skill/` directory that can be consumed as a Codex skill
 
 ## Repository Layout
@@ -12,10 +12,11 @@ It provides:
 ```text
 .
 ├── skills/quark-skill/     # Codex skill metadata, docs, and structured wrapper
-├── config/                 # Local runtime state created at use time
 ├── requirements.txt
 └── LICENSE
 ```
+
+`config/` is created locally at runtime and is not tracked by Git.
 
 ## Quick Start
 
@@ -43,6 +44,7 @@ Inspect folders and set a default target:
 ```bash
 python3 skills/quark-skill/scripts/quark_skill.py folders
 python3 skills/quark-skill/scripts/quark_skill.py set-target --folder-id YOUR_FOLDER_ID
+python3 skills/quark-skill/scripts/quark_skill.py create-dir "来自：分享"
 ```
 
 Batch-save share links:
@@ -50,6 +52,20 @@ Batch-save share links:
 ```bash
 python3 skills/quark-skill/scripts/quark_skill.py save "https://pan.quark.cn/s/..."
 python3 skills/quark-skill/scripts/quark_skill.py save --from-file url.txt
+```
+
+Create share links from your own Quark folders:
+
+```bash
+python3 skills/quark-skill/scripts/quark_skill.py share QUARK_FOLDER_URL --traverse-depth 0
+python3 skills/quark-skill/scripts/quark_skill.py retry-share
+```
+
+Download files from your own Quark shares:
+
+```bash
+python3 skills/quark-skill/scripts/quark_skill.py download "https://pan.quark.cn/s/..."
+python3 skills/quark-skill/scripts/quark_skill.py download --from-file url.txt
 ```
 
 ## Upstream Attribution
