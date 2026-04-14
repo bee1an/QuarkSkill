@@ -1,6 +1,6 @@
 ---
 name: quark-skill
-description: Use when the user wants to log into Quark cloud drive, inspect root folders, create folders, set a default save directory, batch-save Quark share links, generate Quark share links from folders, retry failed shares, or download files from their own Quark shares.
+description: Use when the user wants to log into Quark cloud drive, inspect root folders, create folders, set a default save directory, inspect Quark share sizes, batch-save Quark share links, generate Quark share links from folders, retry failed shares, or download files from their own Quark shares.
 ---
 
 # QuarkPanTool Skill
@@ -36,6 +36,7 @@ Prefer the wrapper script because it returns machine-readable JSON:
 - `python3 ${SKILL_PATH}/scripts/quark_skill.py create-dir "文件夹名"`
 - `python3 ${SKILL_PATH}/scripts/quark_skill.py save "https://pan.quark.cn/s/..."`
 - `python3 ${SKILL_PATH}/scripts/quark_skill.py save --from-file url.txt`
+- `python3 ${SKILL_PATH}/scripts/quark_skill.py share-size "https://pan.quark.cn/s/..."`
 - `python3 ${SKILL_PATH}/scripts/quark_skill.py share QUARK_FOLDER_URL --traverse-depth 0`
 - `python3 ${SKILL_PATH}/scripts/quark_skill.py retry-share`
 - `python3 ${SKILL_PATH}/scripts/quark_skill.py download "https://pan.quark.cn/s/..."`
@@ -69,6 +70,14 @@ The wrapper returns a per-link status summary:
 - `failed`
 
 If the user wants a one-off destination without changing the saved default, pass `--target-id`.
+
+## Share Size Workflow
+
+Use `share-size` to inspect the recursive total size of one or more Quark share links.
+
+- It accepts direct URLs or `--from-file`
+- Folder sizes are calculated from all nested files
+- The result includes raw bytes and a human-readable total
 
 ## Share Workflow
 

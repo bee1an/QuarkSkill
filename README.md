@@ -4,7 +4,7 @@ QuarkSkill is a standalone repository for a Codex skill that works with Quark cl
 
 It provides:
 
-- a structured skill entrypoint for readiness checks, login, folder inspection, folder creation, batch save, batch share, retry-share, and local download
+- a structured skill entrypoint for readiness checks, login, folder inspection, folder creation, batch save, share-size inspection, batch share, retry-share, and local download
 - a `skills/quark-skill/` directory that can be consumed as a Codex skill
 
 ## Repository Layout
@@ -52,6 +52,13 @@ Batch-save share links:
 ```bash
 python3 skills/quark-skill/scripts/quark_skill.py save "https://pan.quark.cn/s/..."
 python3 skills/quark-skill/scripts/quark_skill.py save --from-file url.txt
+```
+
+Inspect the total size of share links:
+
+```bash
+python3 skills/quark-skill/scripts/quark_skill.py share-size "https://pan.quark.cn/s/..."
+python3 skills/quark-skill/scripts/quark_skill.py share-size --from-file url.txt
 ```
 
 Create share links from your own Quark folders:

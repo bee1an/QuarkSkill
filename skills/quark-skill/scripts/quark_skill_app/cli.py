@@ -11,6 +11,7 @@ from .commands_share import (
     command_list_transfer_updates,
     command_retry_share,
     command_save,
+    command_share_size,
     command_share,
 )
 from .constants import DEFAULT_RETRY_FILE, DEFAULT_RETRY_SHARE_FILE, DEFAULT_SHARE_ERROR_FILE, DEFAULT_SHARE_FILE, DOWNLOADS_DIR, REPO_ROOT, SHARE_TYPE_CHOICES
@@ -50,6 +51,10 @@ def build_parser() -> argparse.ArgumentParser:
     save_parser.add_argument("urls", nargs="*", help="One or more share URLs.")
     save_parser.add_argument("--from-file", help="Read share URLs from a text file.")
     save_parser.add_argument("--target-id", help="Override the saved target folder id for this run only.")
+
+    share_size_parser = subparsers.add_parser("share-size", help="Calculate the total size of one or more Quark share links.")
+    share_size_parser.add_argument("urls", nargs="*", help="One or more share URLs.")
+    share_size_parser.add_argument("--from-file", help="Read share URLs from a text file.")
 
     share_parser = subparsers.add_parser("share", help="Create Quark share links from a folder page URL or folder id.")
     share_parser.add_argument("resource", help="Quark folder page URL or folder id.")
@@ -117,6 +122,7 @@ async def dispatch(args: argparse.Namespace) -> int:
         "list": command_list,
         "search": command_search,
         "save": command_save,
+        "share-size": command_share_size,
         "share": command_share,
         "retry-share": command_retry_share,
         "download": command_download,

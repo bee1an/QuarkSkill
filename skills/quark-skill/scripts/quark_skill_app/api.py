@@ -245,23 +245,29 @@ async def fetch_share_detail(cookie: str, pwd_id: str, stoken: str, pdir_fid: st
     page = 1
     is_owner = 0
     while True:
-        result = await api_get(
-            "https://drive-pc.quark.cn/1/clouddrive/share/sharepage/detail",
-            cookie,
-            params={
-                "pr": "ucpro",
-                "fr": "pc",
-                "uc_param_str": "",
-                "pwd_id": pwd_id,
-                "stoken": stoken,
-                "pdir_fid": pdir_fid,
-                "force": "0",
-                "_page": str(page),
-                "_size": "50",
-                "_sort": "file_type:asc,updated_at:desc",
-                "__dt": random_dt(200, 9999),
-                "__t": timestamp_ms(),
-            },
+        result = ensure_ok(
+            await api_get(
+                "https://drive-h.quark.cn/1/clouddrive/share/sharepage/detail",
+                cookie,
+                params={
+                    "pr": "ucpro",
+                    "fr": "pc",
+                    "uc_param_str": "",
+                    "ver": "2",
+                    "pwd_id": pwd_id,
+                    "stoken": stoken,
+                    "pdir_fid": pdir_fid,
+                    "force": "0",
+                    "_page": str(page),
+                    "_size": "50",
+                    "_fetch_banner": "1",
+                    "_fetch_share": "1",
+                    "fetch_relate_conversation": "1",
+                    "_fetch_total": "1",
+                    "_sort": "file_type:asc,file_name:asc",
+                },
+            ),
+            "failed to fetch share detail",
         )
         data = result.get("data") or {}
         metadata = result.get("metadata") or {}
@@ -273,6 +279,7 @@ async def fetch_share_detail(cookie: str, pwd_id: str, stoken: str, pdir_fid: st
                     "fid": item["fid"],
                     "file_name": item["file_name"],
                     "dir": bool(item["dir"]),
+                    "size": item.get("size"),
                     "include_items": item.get("include_items", 0),
                     "share_fid_token": item["share_fid_token"],
                 }

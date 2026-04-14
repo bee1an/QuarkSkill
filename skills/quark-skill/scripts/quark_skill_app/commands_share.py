@@ -39,6 +39,59 @@ from .state import (
 )
 
 
+def format_size_bytes(total_size_bytes: int) -> str:
+    units = ["B", "KiB", "MiB", "GiB", "TiB"]
+    value = float(total_size_bytes)
+    unit_index = 0
+    while value >= 1024 and unit_index < len(units) - 1:
+        value /= 1024
+        unit_index += 1
+    if unit_index == 0:
+        return f"{int(value)} {units[unit_index]}"
+    return f"{value:.2f} {units[unit_index]}"
+
+
+def require_share_file_size(item: dict[str, Any]) -> int:
+    raw_size = item.get("size")
+    file_name = str(item.get("file_name", "") or item.get("fid", ""))
+    if raw_size in (None, ""):
+        raise RuntimeError(f"missing size for shared file `{file_name}`")
+    try:
+        size = int(raw_size)
+    except Exception as exc:
+        raise RuntimeError(f"invalid size for shared file `{file_name}`: {raw_size}") from exc
+    if size < 0:
+        raise RuntimeError(f"invalid size for shared file `{file_name}`: {raw_size}")
+    return size
+
+
+async def collect_share_size(
+    cookie: str,
+    pwd_id: str,
+    stoken: str,
+    pdir_fid: str = "0",
+) -> dict[str, int]:
+    _, items = await fetch_share_detail(cookie, pwd_id, stoken, pdir_fid=pdir_fid)
+    total_size_bytes = 0
+    files_count = 0
+    folders_count = 0
+    for item in items:
+        if item["dir"]:
+            folders_count += 1
+            nested_summary = await collect_share_size(cookie, pwd_id, stoken, pdir_fid=item["fid"])
+            total_size_bytes += nested_summary["total_size_bytes"]
+            files_count += nested_summary["files_count"]
+            folders_count += nested_summary["folders_count"]
+            continue
+        total_size_bytes += require_share_file_size(item)
+        files_count += 1
+    return {
+        "total_size_bytes": total_size_bytes,
+        "files_count": files_count,
+        "folders_count": folders_count,
+    }
+
+
 async def save_share(cookie: str, target_id: str, share_url: str) -> dict[str, Any]:
     pwd_id, password = parse_share_url(share_url)
     stoken = await fetch_share_token(cookie, pwd_id, password)
@@ -130,6 +183,60 @@ async def command_save(args: argparse.Namespace) -> int:
             "results": results,
         },
         f"Processed {len(results)} share links for {account.get('nickname', '')}: {saved} saved, {already_saved} already present, {failed_count} failed.",
+    )
+
+
+async def command_share_size(args: argparse.Namespace) -> int:
+    missing = find_missing_modules()
+    if missing:
+        return fail("missing_dependencies", f"Missing Python modules: {', '.join(missing)}", INSTALL_HINT)
+
+    try:
+        urls = extract_urls(args.urls, args.from_file)
+    except FileNotFoundError as exc:
+        return fail("missing_url_file", str(exc), "Pass an existing `--from-file` path, or provide URLs directly.")
+    if not urls:
+        return fail("missing_urls", "No share URLs were provided.", "Pass one or more URLs directly, or use `--from-file url.txt`.")
+
+    cookie = cookie_string_from_file()
+    if not cookie:
+        return fail("not_logged_in", "Quark is not logged in", "Run the login command first.")
+
+    results: list[dict[str, Any]] = []
+    for share_url in urls:
+        pwd_id = ""
+        try:
+            pwd_id, password = parse_share_url(share_url)
+            stoken = await fetch_share_token(cookie, pwd_id, password)
+            if not stoken:
+                results.append({"share_url": share_url, "pwd_id": pwd_id, "status": "failed", "reason": "invalid share or password"})
+                continue
+            summary = await collect_share_size(cookie, pwd_id, stoken)
+            results.append(
+                {
+                    "share_url": share_url,
+                    "pwd_id": pwd_id,
+                    "status": "sized",
+                    "total_size_bytes": summary["total_size_bytes"],
+                    "total_size_human": format_size_bytes(summary["total_size_bytes"]),
+                    "files_count": summary["files_count"],
+                    "folders_count": summary["folders_count"],
+                }
+            )
+        except Exception as exc:
+            failed_result = {"share_url": share_url, "status": "failed", "reason": str(exc)}
+            if pwd_id:
+                failed_result["pwd_id"] = pwd_id
+            results.append(failed_result)
+
+    sized = sum(1 for item in results if item["status"] == "sized")
+    failed_count = sum(1 for item in results if item["status"] == "failed")
+    return ok(
+        {
+            "summary": {"total": len(results), "sized": sized, "failed": failed_count},
+            "results": results,
+        },
+        f"Processed {len(results)} share links for size inspection: {sized} sized, {failed_count} failed.",
     )
 
 

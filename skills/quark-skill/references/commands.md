@@ -83,6 +83,21 @@ Per-link statuses are:
 - `already_saved`
 - `failed`
 
+## Share Size
+
+```bash
+python3 ${SKILL_PATH}/scripts/quark_skill.py share-size "https://pan.quark.cn/s/..."
+python3 ${SKILL_PATH}/scripts/quark_skill.py share-size "https://pan.quark.cn/s/one" "https://pan.quark.cn/s/two?pwd=1234"
+python3 ${SKILL_PATH}/scripts/quark_skill.py share-size --from-file url.txt
+```
+
+Each successful result includes:
+
+- `total_size_bytes`
+- `total_size_human`
+- `files_count`
+- `folders_count`
+
 ## Share
 
 ```bash
